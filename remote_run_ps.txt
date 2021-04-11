@@ -1,0 +1,1 @@
+Invoke-Command -FilePath recycle_all_pools.ps1 -ComputerName example

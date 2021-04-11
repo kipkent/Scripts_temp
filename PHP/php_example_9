@@ -1,0 +1,52 @@
+<?php
+$myServer = "db.azure.cet.ac.il";
+$myUser = "user";
+$myPass = "pass";
+$myDB = "test-sql";
+$masterDB = "master";
+
+$serverName = $myServer; //serverName\instanceName
+$connectionInfo = array( "Database"=>$myDB, "UID"=>$myUser, "PWD"=>$myPass);
+$conn = sqlsrv_connect( $serverName, $connectionInfo);
+
+$connectionInfo_master = array( "Database"=>$masterDB, "UID"=>$myUser, "PWD"=>$myPass);
+$conn_master = sqlsrv_connect( $serverName, $connectionInfo_master);
+
+if( $conn ) {
+     echo "Connection established.<br /> in SQL server - $myServer <br /> User - $myUser <br /> DB - $myDB";
+}else{
+     echo "Connection could not be established.<br />";
+     die( print_r( sqlsrv_errors(), true));
+}
+
+//Query to DB $masterDB
+print "<h2>Query to DB $masterDB</h2>";
+
+$sql_master = "SELECT [name]FROM [master].[dbo].[sysdatabases]";
+print "SQL Query is: $sql_master\n". "<br />";
+print "=)<br /> ";
+$result_master = sqlsrv_query($conn_master, $sql_master);
+if($result_master === false) {
+    die(print_r(sqlsrv_errors(), true));
+}
+//Fetching Data by array
+while($row_master = sqlsrv_fetch_array($result_master, SQLSRV_FETCH_ASSOC)) {
+    print_r($row_master ."<br />"."<br />");
+    echo $row_master['name']."<br />";
+}
+
+//Query to DB $myDB
+print "<h2>Query to DB $myDB</h2>";
+$sql = "SELECT [TABLE_NAME]FROM [INFORMATION_SCHEMA].[TABLES]";
+print "SQL Query is: $sql\n". "<br />";
+print "=)<br /> ";
+$result = sqlsrv_query($conn, $sql);
+if($result === false) {
+    die(print_r(sqlsrv_errors(), true));
+}
+//Fetching Data by array
+while($row = sqlsrv_fetch_array($result, SQLSRV_FETCH_ASSOC)) {
+    print_r($row ."<br />"."<br />");
+    echo $row['TABLE_NAME']."<br />";
+}
+?>

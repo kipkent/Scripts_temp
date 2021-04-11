@@ -1,0 +1,1 @@
+﻿robocopy "D:\Inetpub\Websites\example" "D:\Inetpub\example" /r:60 /w:5 /PURGE /MIR /MT:64

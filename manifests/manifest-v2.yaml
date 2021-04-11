@@ -1,0 +1,41 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: alex-deployment
+  labels:
+    app : alex-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: alex-test
+  template:
+    metadata:
+      labels:
+        project: alex-test   # Service will look for those PODS Labels!!!
+    spec:
+      containers:
+        - name : alex-testimage
+          image: kipkent/kipkent:latest
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alex-test-service
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+  labels:
+    env  : prod
+    owner: Alexk
+spec:
+  selector:
+    project: alex-test    # Selecting PODS with those Labels
+  ports:
+    - name      : app-list
+      protocol  : TCP
+      port      : 80  # Port on Load Balancer
+      targetPort: 80  # Port on POD
+  type: LoadBalancer
